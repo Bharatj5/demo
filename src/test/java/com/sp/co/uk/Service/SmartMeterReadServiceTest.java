@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -34,6 +35,7 @@ public class SmartMeterReadServiceTest {
         testAccount.setAccountNumber(1000001l);
 
         smartMeterRead = new SmartMeterRead();
+        smartMeterRead.setId(1l);
         smartMeterRead.setAccount(testAccount);
         smartMeterRead.setElectricitySmartRead(800l);
         smartMeterRead.setGasSmartRead(500l);
@@ -55,5 +57,22 @@ public class SmartMeterReadServiceTest {
         assertThat(read.getElectricityMeterId()).isEqualTo("E123");
         assertThat(read.getElectricitySmartRead()).isEqualTo(800);
         assertThat(read.getGasSmartRead()).isEqualTo(500);
+    }
+
+    @Test
+    public void getSmartMeterRead_shouldReturnRead() {
+
+        given(smartMeterReadRepository.findById(1l)).willReturn(
+                Optional.of(smartMeterRead));
+/*
+        SmartMeterRead read = smartMeterReadService.findById(1l);
+
+
+        assertThat(read.getAccount().getAccountNumber()).isEqualTo(1000001);
+        assertThat(read.getId()).isEqualTo(1l);
+        assertThat(read.getGasMeterId()).isEqualTo("G123");
+        assertThat(read.getElectricityMeterId()).isEqualTo("E123");
+        assertThat(read.getElectricitySmartRead()).isEqualTo(800);
+        assertThat(read.getGasSmartRead()).isEqualTo(500);*/
     }
 }

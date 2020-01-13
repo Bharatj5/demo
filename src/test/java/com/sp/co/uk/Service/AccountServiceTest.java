@@ -32,8 +32,8 @@ public class AccountServiceTest {
         when(accountRepository.findById(1000001l)).thenReturn(
                 Optional.of(new Account(1000001l, "John Doe")));
 
-        Account account = accountService.findById(1000001l);
-        assertThat(account.getAccountNumber()).isEqualTo(1000001l);
-        assertThat(account.getName()).isEqualTo("John Doe");
+        Optional<Account> account = accountService.findById(1000001l);
+        assertThat(account.get().getAccountNumber()).isEqualTo(1000001l);
+        assertThat(account.get().getName()).isEqualTo("John Doe");
     }
 }

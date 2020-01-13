@@ -3,6 +3,7 @@ package com.sp.co.uk.controller;
 import com.sp.co.uk.domain.SmartMeterRead;
 import com.sp.co.uk.dto.ReadDTO;
 import com.sp.co.uk.dto.SmartMeterDTO;
+import com.sp.co.uk.exception.NotFoundException;
 import com.sp.co.uk.service.AccountService;
 import com.sp.co.uk.service.SmartMeterReadService;
 import org.modelmapper.ModelMapper;
@@ -42,11 +43,12 @@ public class SmartMeterController {
     }
 
     @GetMapping("/api/smart/reads/{accountNumber}")
-    private ResponseEntity<CollectionModel<EntityModel<SmartMeterDTO>>> getReads(
+    public ResponseEntity<CollectionModel<EntityModel<SmartMeterDTO>>> getReads(
             @PathVariable long accountNumber) {
 
-        // TODO: This should be separate service, as of now added it for validation
-        accountService.findById(accountNumber);
+        // This should be separate service, as of now added it for validation
+        accountService.findById(accountNumber)
+                .orElseThrow(() -> new NotFoundException("Account number not found"));
 
         List<SmartMeterRead> reads =
                 smartMeterReadService.getSmartMeterReads(accountNumber);
@@ -56,7 +58,7 @@ public class SmartMeterController {
 
         List<EntityModel<SmartMeterDTO>> reads1 = StreamSupport.stream(readDto.spliterator(), false)
                 .map(read -> new EntityModel<>(read,
-                        linkTo(methodOn(SmartMeterController.class).getReads(read.getAccountNumber())).withSelfRel(),
+                        // linkTo(methodOn(SmartMeterController.class).getReads(read.getAccountNumber())).withSelfRel(),
                         linkTo(methodOn(SmartMeterController.class).findOne(read.getId())).withRel("read")))
                 .collect(Collectors.toList());
 
@@ -68,7 +70,7 @@ public class SmartMeterController {
 
 
     @GetMapping("/api/smart/read/{id}")
-    private ResponseEntity<EntityModel<ReadDTO>> findOne(@PathVariable long id) {
+    public ResponseEntity<EntityModel<ReadDTO>> findOne(@PathVariable long id) {
         return smartMeterReadService.findById(id)
                 .map(read -> modelMapper.map(read, ReadDTO.class))
                 .map(read -> new EntityModel<>(read,

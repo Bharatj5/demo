@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,5 +42,19 @@ public class SmartMeterReadRepositoryTest {
         assertThat(read.getElectricityMeterId()).isEqualTo(meterRead.getElectricityMeterId());
         assertThat(read.getElectricitySmartRead()).isEqualTo(meterRead.getElectricitySmartRead());
         assertThat(read.getGasSmartRead()).isEqualTo(meterRead.getGasSmartRead());
+    }
+
+    @Test
+    public void getSmartMeterRead_returnRead() {
+        Account account = entityManager.merge(
+                new Account(1000001l, "John Doe"));
+
+        SmartMeterRead meterRead = entityManager.merge(
+                new SmartMeterRead(1l, account,
+                        800l, 500l,
+                        "G123", "E123"));
+        Optional<SmartMeterRead> read = smartMeterReadRepository.findById(1l);
+        assertThat(read.get().getId()).isEqualTo(meterRead.getId());
+
     }
 }

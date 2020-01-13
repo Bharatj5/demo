@@ -2,7 +2,6 @@ package com.sp.co.uk.service;
 
 import com.sp.co.uk.dao.SmartMeterReadRepository;
 import com.sp.co.uk.domain.SmartMeterRead;
-import com.sp.co.uk.exception.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,6 @@ public class SmartMeterReadService {
     }
 
     public Optional<SmartMeterRead> findById(long id) {
-        Optional<SmartMeterRead> read = smartMeterReadRepository
-                .findById(id);
-        read.orElseThrow(() -> new NotFoundException("Read not found for id : " + id));
-        return read;
+        return smartMeterReadRepository.findById(id);
     }
 }

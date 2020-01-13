@@ -58,7 +58,7 @@ public class SmartMeterReadControllerTest {
     public void getSmartMeterReads_shouldReturnSmartMeterReads() throws Exception {
 
         given(accountService.findById(testAccount.getAccountNumber()))
-                .willReturn(testAccount);
+                .willReturn(Optional.of(testAccount));
 
         given(smartMeterReadService.getSmartMeterReads(100001l))
                 .willReturn(Arrays.asList(smartMeterRead));
@@ -67,8 +67,11 @@ public class SmartMeterReadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(
-                        jsonPath("$._embedded.smartMeterDTOList[0].accountNumber")
-                                .value(100001));
+                        jsonPath("$._embedded.smartMeterDTOList[0].electricityRead")
+                                .value(800))
+                .andExpect(
+                        jsonPath("$._embedded.smartMeterDTOList[0].gasRead")
+                                .value(500));
     }
 
     @Test
@@ -87,7 +90,7 @@ public class SmartMeterReadControllerTest {
     @Test
     public void whenMethodArgumentMismatch_thenBadRequest() throws Exception {
          given(smartMeterReadService.getSmartMeterReads(anyLong()))
-                 .willThrow(new NotFoundException("record not found"));
+                 .willThrow(new NotFoundException(""));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/smart/reads/404"))
                 .andExpect(status().isNotFound());
     }
