@@ -1,4 +1,4 @@
-# demo
+# Getting Started
 
 ### Thought Process
 Given problem statement is asking for create RESTful web service for Smart meter reads of given account number.<br />
