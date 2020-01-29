@@ -15,7 +15,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Optional<Account> findById(long accountNumber) {
+    public Optional<Account> findById(Long accountNumber) {
         return accountRepository.findById(accountNumber);
     }
 }

@@ -9,20 +9,19 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class CustomeExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler({Exception.class})
     public static ResponseEntity<Object> handleAll() {
         final ApiErrorDTO apiError = new ApiErrorDTO(HttpStatus.BAD_REQUEST, "Bad request", "Bad request");
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
 
-    @ExceptionHandler({ NotFoundException.class })
+    @ExceptionHandler({NotFoundException.class})
     public static ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
         final ApiErrorDTO apiError = new ApiErrorDTO(HttpStatus.NOT_FOUND, ex.getMessage(), "Record not found");
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
 }

@@ -31,5 +31,4 @@ public class SmartMeterRead {
 
     @Column(name = "ELEC_ID")
     private String electricityMeterId;
-
 }
