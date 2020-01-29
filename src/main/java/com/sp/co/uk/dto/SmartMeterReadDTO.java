@@ -1,19 +1,20 @@
 package com.sp.co.uk.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.server.core.Relation;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SmartMeterDTO {
+@Relation(collectionRelation = "smartMeterReads")
+public class SmartMeterReadDTO {
 
     private long id;
 
-    @JsonIgnore
+    @JsonProperty("account")
     private long accountNumber;
 
     @JsonProperty("electricityRead")

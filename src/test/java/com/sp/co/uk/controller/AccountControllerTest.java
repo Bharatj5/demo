@@ -1,7 +1,7 @@
 package com.sp.co.uk.controller;
 
-import com.sp.co.uk.dao.AccountRepository;
 import com.sp.co.uk.domain.Account;
+import com.sp.co.uk.service.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +26,29 @@ public class AccountControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Test
     public void account_shouldReturnAccount() throws Exception {
-        given(accountRepository.findById(100001l))
-                .willReturn(Optional.of(new Account(100001l, "TOM JOHN")));
+        given(accountService.findById(100001L))
+                .willReturn(Optional.of(
+                        new Account(100001L, "TOM JOHN")));
 
-        mockMvc.perform(get("/api/account/100001").accept(MediaTypes.HAL_JSON_VALUE))
+        mockMvc.perform(get("/api/accounts/100001").accept(MediaTypes.HAL_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("accountNumber").value(100001l));
+                .andExpect(jsonPath("accountNumber").value(100001L));
     }
+
+    @Test
+    public void getAccount_shouldReturnNotFoundStatus() throws Exception {
+        given(accountService.findById(404L))
+                .willReturn(Optional.ofNullable(null));
+        mockMvc.perform(get("/api/accounts/404").accept(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("status").value("NOT_FOUND"))
+                .andExpect(jsonPath("message ").value("Account number 404 not found"))
+                .andExpect(jsonPath("errors").value("Record not found"));
+    }
+
 }

@@ -44,12 +44,12 @@ public class SmartMeterReadControllerTest {
 
     @Before
     public void setUp() {
-        testAccount = new Account(100001l, "TOM JOE");
+        testAccount = new Account(100001L, "TOM JOE");
         smartMeterRead = new SmartMeterRead();
-        smartMeterRead.setId(1l);
+        smartMeterRead.setId(1L);
         smartMeterRead.setAccount(testAccount);
-        smartMeterRead.setElectricitySmartRead(800l);
-        smartMeterRead.setGasSmartRead(500l);
+        smartMeterRead.setElectricitySmartRead(800L);
+        smartMeterRead.setGasSmartRead(500L);
         smartMeterRead.setGasMeterId("T101");
         smartMeterRead.setElectricityMeterId("E101");
     }
@@ -60,17 +60,17 @@ public class SmartMeterReadControllerTest {
         given(accountService.findById(testAccount.getAccountNumber()))
                 .willReturn(Optional.of(testAccount));
 
-        given(smartMeterReadService.getSmartMeterReads(100001l))
+        given(smartMeterReadService.getSmartMeterReads(100001L))
                 .willReturn(Arrays.asList(smartMeterRead));
 
         mockMvc.perform(get("/api/smart/reads/100001"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(
-                        jsonPath("$._embedded.smartMeterDTOList[0].electricityRead")
+                        jsonPath("$._embedded.smartMeterReads[0].electricityRead")
                                 .value(800))
                 .andExpect(
-                        jsonPath("$._embedded.smartMeterDTOList[0].gasRead")
+                        jsonPath("$._embedded.smartMeterReads[0].gasRead")
                                 .value(500));
     }
 
@@ -89,8 +89,8 @@ public class SmartMeterReadControllerTest {
 
     @Test
     public void whenMethodArgumentMismatch_thenBadRequest() throws Exception {
-         given(smartMeterReadService.getSmartMeterReads(anyLong()))
-                 .willThrow(new NotFoundException(""));
+        given(smartMeterReadService.getSmartMeterReads(anyLong()))
+                .willThrow(new NotFoundException(""));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/smart/reads/404"))
                 .andExpect(status().isNotFound());
     }
@@ -98,9 +98,11 @@ public class SmartMeterReadControllerTest {
     @Test
     public void whenMethodReadMismatch_thenNotFound() throws Exception {
         given(smartMeterReadService.getSmartMeterReads(anyLong()))
-                .willThrow(new RuntimeException());
+                .willThrow(new NotFoundException(""));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/smart/read/404"))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("status").value("NOT_FOUND"))
+                .andExpect(jsonPath("message ").value("reads for number 404 not found"))
+                .andExpect(jsonPath("errors").value("Record not found"));
     }
 
 }
